@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #092964 0%, #cfdef3 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+/* Карточка калькулятора */
+.calculator-card {
+    max-width: 620px;
+    width: 100%;
+    background: rgb(7, 124, 160);
+    backdrop-filter: blur(0px);
+    border-radius: 2rem;
+    box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+/* Шапка */
+.card-header {
+    background: #1ebfe7;
+    background: linear-gradient(135deg, #0a6f81, #1a4a7a);
+    padding: 1.8rem 2rem;
+    color: #fff;
+}
+
+.card-header h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header h1::before {
+    content: "";
+    font-size: 2rem;
+}
+
+.card-header p {
+    margin-top: 0.5rem;
+    opacity: 0.85;
+    font-size: 0.9rem;
+}
+
+/* Форма */
+.form-container {
+    padding: 1.8rem 2rem 2rem 2rem;
+}
+
+.input-group {
+    margin-bottom: 1.8rem;
+}
+
+label {
+    font-weight: 600;
+    color: #1f2f47;
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+}
+
+.age-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+#ageInput {
+    flex: 1;
+    padding: 0.9rem 1rem;
+    font-size: 1.05rem;
+    border: 2px solid #d4dfed;
+    border-radius: 1.2rem;
+    background: #fff;
+    transition: 0.2s;
+    font-weight: 500;
+    outline: none;
+    color: #0a1c2f;
+}
+
+#ageInput:focus {
+    border-color: #1e6f9f;
+    box-shadow: 0 0 0 3px rgba(30, 111, 159, 0.2);
+}
+
+.age-hint {
+    font-size: 0.75rem;
+    color: #5e6f8d;
+    margin-top: 0.4rem;
+}
+
+/* Радио-группа */
+.gender-group {
+    background: #f8fafd;
+    border-radius: 1.2rem;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid #e2edf7;
+}
+
+.radio-options {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+}
+
+.radio-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #1f3a5f;
+    margin-bottom: 0;
+}
+
+input[type="radio"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: #1e6f9f;
+    cursor: pointer;
+}
+
+/* Кнопка */
+.calc-btn {
+    background: #1f6392;
+    background: linear-gradient(95deg, #1a5a86, #2277a8);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 0.9rem 1.8rem;
+    border-radius: 3rem;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 6px 14px rgba(0, 32, 64, 0.2);
+    letter-spacing: 0.3px;
+    margin-top: 0.5rem;
+}
+
+.calc-btn:hover {
+    background: #0e4e75;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.15);
+}
+
+.calc-btn:active {
+    transform: translateY(1px);
+}
+
+/* textarea результата */
+.result-area {
+    margin-top: 1.8rem;
+}
+
+.result-area label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.result-area label span {
+    font-size: 1.2rem;
+}
+
+textarea {
+    width: 100%;
+    border-radius: 1.2rem;
+    border: 2px solid #dce5f0;
+    background: #fefefe;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    font-family: 'SF Mono', 'Fira Code', monospace, system-ui;
+    resize: vertical;
+    outline: none;
+    transition: 0.2s;
+    color: #102a41;
+    font-weight: 500;
+}
+
+textarea:focus {
+    border-color: #3c8fc9;
+    background: #fff;
+}
+
+/* Ссылка footer */
+.footer-note {
+    margin-top: 1.8rem;
+    font-size: 0.7rem;
+    text-align: center;
+    color: #424e61;
+    border-top: 1px solid #e2edf5;
+    padding-top: 1.2rem;
+}
+
+
+/* Адаптив */
+@media (max-width: 500px) {
+    .form-container {
+        padding: 1.5rem;
+    }
+    .card-header h1 {
+        font-size: 1.5rem;
+    }
+    .radio-options {
+        gap: 1.2rem;
+    }
+}
+
+.error-marker {
+    border-color: #d9534f !important;
+    background-color: #fff6f5;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Иконка -->
+    <link rel="shortcut icon" href="../icons/main_icon.png" type="image/x-icon">
+    <!-- CSS стили -->
+    <link rel="stylesheet" href="../../src/styles/style.css">
+
+    <title>Песнионный калькулятор</title>
+</head>
+<body>
+
+    <!-- Карточка калькулятора -->
+    <div class="calculator-card">
+        <div class="card-header">
+            <h1>Пенсионный калькулятор</h1>
+            <p>Проверьте, когда наступит пенсионный возраст или пора ли уже отдыхать</p>
+        </div>
+
+        <div class="form-container">
+            <form id="pensionForm" novalidate>
+                <!-- Поле возраста  -->
+                <div class="input-group">
+                    <label for="ageInput">Ваш возраст (полных лет)</label>
+                    <div class="age-wrapper">
+                        <input type="number" id="ageInput" name="age" placeholder="Например: 30" min="0" max="130" step="1" required>
+                    </div>
+                    <div class="age-hint">Целое число от 0 до 130</div>
+                </div>
+
+                 <!-- Радиокнопка выбора пола -->
+                <div class="input-group">
+                    <label>Пол</label>
+                    <div class="gender-group">
+                        <div class="radio-options">
+
+                            <label>
+                                <input type="radio" name="gender" value="male" required> Мужчина
+                            </label>
+                            
+                            <label>
+                                <input type="radio" name="gender" value="female" required> Женщина
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Кнопка расчитать -->
+                <button type="submit" class="calc-btn">Расчитать</button>
+
+                <!-- Поле для вывода результата -->
+                <div class="result-area">
+                    <label>Результат</label>
+                    <textarea id="resultField" rows="3" readonly placeholder="Здесь появится заключение после расчёта..."></textarea>
+                </div>
+
+                <div class="footer-note">
+                    * Условия расчёта основаны на классической шкале выхода на пенсию в РФ
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Скрипт для страницы -->
+    <script src="../../src/scripts/script.js"></script>
+</body>
+</html>
