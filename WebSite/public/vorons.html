@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Считать ворон</title>
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="../../src/styles/vorons.css">
+
+    <!-- Иконка -->
+    <link rel="shortcut icon" href="../icons/voron.png" type="image/x-icon">
+</head>
+<body>
+
+    <div class="vorons-card">
+        <div class="vorons-header">
+            <h1>Подсчёт ворон</h1>
+        </div>
+
+        <div class="form-container">
+            <form id="voronsForm" novalidate>
+
+                <!-- Поле количества ворон -->
+                <div class="input-group">
+                    <label for="valueInput">Количество ворон</label>
+
+                    <div class="value-wrapper">
+                        <input type="number" id="valueInput" name="value" placeholder="Например: 2" min="0" max="10000" step="1" required>
+                    </div>
+
+                    <div class="value-hint">Целое число от 0 до 10000</div>
+                </div>
+
+                <!-- Кнопка считать -->
+                <button type="submit" id="count-btn" class="calc-btn">Считать</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="back-link">
+        <a href="../../index.html" class="back-btn">Назад</a>
+    </div>
+
+
+    <!-- Скрипт для страницы -->
+    <script src="../../src/scripts/vorons.js"></script>
+</body>
+</html>
