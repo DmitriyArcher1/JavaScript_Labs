@@ -216,6 +216,25 @@ textarea:focus {
     margin-top: 35px;
 }
 
+.button-prompt {
+    margin-top: auto;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(130deg, #084754, #1a4a7a);
+    padding: 0.6rem 1rem;
+    border-radius: 1.3rem;
+    transition: background 0.3s cubic-bezier(.65,.05,.36,1);
+}
+
+.button-prompt:hover {
+    background: linear-gradient(100deg, #084754, #07345d);
+}
+
+.link-to-prompt {
+    margin-top: 35px;
+}
+
 /* Ссылка footer */
 .footer-note {
     margin-top: 1.8rem;

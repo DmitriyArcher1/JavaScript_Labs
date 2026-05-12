@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ввод числа</title>
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="../../src/styles/prompt.css">
+
+    <!-- Иконка -->
+    <link rel="shortcut icon" href="../icons/prompt.png" type="image/x-icon">
+</head>
+<body>
+    <div class="card">
+        <h1>Ввод числа</h1>
+        <p>Нажмите на ссылку, чтобы ввести число не большее 100</p>
+        
+        <a href="../../index.html" id="numberLink">Получить число</a>
+
+        <div class="notice">
+            * Если введёте число большее 100 - переход разрешён<br>
+            * Если нажмёте Cancel - спросим разрешение<br>
+            * Если введёте число меньшее 100 - попросим повторить
+        </div>
+    </div>
+    
+    <!-- Скрипт для страницы -->
+    <script src="../../src/scripts/prompt.js"></script>
+</body>
+</html>
