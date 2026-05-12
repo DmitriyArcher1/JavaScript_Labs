@@ -1,1 +1,1 @@
-<h1 align="center">Лабораторные работы по JavaScrit</h1>
+<h1 align="center">Лабораторные работы по JavaScript</h1>
