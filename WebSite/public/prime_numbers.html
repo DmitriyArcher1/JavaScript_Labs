@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простые числа</title>
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="../../src/styles/prime_numbers.css">
+
+    <!-- Иконка -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- БЛОК 1: ПРОСТЫЕ ЧИСЛА -->
+        <div class="card">
+            <h2>🔢 Простые числа</h2>
+            <div class="input-group">
+                <div class="field">
+                    <label>Введите n (n > 1)</label>
+                    <input type="number" id="primeInput" placeholder="например, 50" min="2" value="30" step="1">
+                </div>
+                <button id="showPrimesBtn">Найти простые</button>
+            </div>
+            <div class="result-area">
+                <div class="result-title">
+                    <span>✨ Простые числа от 2 до <span id="displayN">30</span></span>
+                    <span class="badge" id="primeCountBadge">количество: --</span>
+                </div>
+                <div id="primesResult" class="primes-list">
+                    <!-- результат будет динамически -->
+                    <span class="empty-message">👉 Введите число и нажмите «Найти простые»</span>
+                </div>
+                <div class="info-note">
+                    Простое число — натуральное >1, которое делится только на 1 и на себя.
+                </div>
+            </div>
+        </div>
+
+        <!-- БЛОК 2: ТАБЛИЦА С ЖИВОТНЫМИ (dog/cat) В КОНСОЛЬ -->
+        <div class="card">
+            <h2>🐾 Генератор таблицы</h2>
+            <div class="input-group">
+                <div class="field">
+                    <label>Количество строк</label>
+                    <input type="number" id="rowsInput" placeholder="число строк" min="1" value="6" step="1">
+                </div>
+                <button id="drawTableBtn">🐕 Рисовать 🐈</button>
+            </div>
+            <div class="result-area">
+                <div class="result-title">
+                    📋 Вывод в консоль браузера
+                    <span class="badge">F12 / DevTools → Console</span>
+                </div>
+                <div style="font-family: monospace; background: #eef3fa; border-radius: 20px; padding: 14px; font-size: 0.85rem;">
+                    📌 Формат таблицы: <strong>6 животных в строке</strong>, разделитель — <strong>табуляция</strong>.<br>
+                    🧩 Последовательность: 3 собаки (dog), 2 кота (cat) → повторяется циклически.<br>
+                    🖱️ При нажатии «Рисовать» таблица из <span id="rowCountPreview">6</span> строк(и) появится в <strong>консоли</strong>.
+                </div>
+                <div class="console-hint" id="lastConsoleHint">
+                    ⚡ Последний вызов: пока ничего не выводили.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- Скрипт -->
+    <script src="../../src/scripts/prime_numbers.js"></script>
+
+</body>
+</html>

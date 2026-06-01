@@ -1,0 +1,203 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #092964 0%, #cfdef3 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+* главный контейнер — две карточки в ряд на широком экране */
+.dashboard {
+    max-width: 1400px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    align-items: stretch;
+}
+
+/* карточки */
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(0px);
+    border-radius: 40px;
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    padding: 28px 30px 36px;
+    transition: transform 0.2s ease, box-shadow 0.2s;
+    flex: 1;
+    min-width: 320px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 28px 40px -14px rgba(0, 0, 0, 0.25);
+}
+
+h2 {
+    font-size: 1.9rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: -0.3px;
+    border-left: 5px solid #2c7da0;
+    padding-left: 18px;
+}
+
+.input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    margin-top: 12px;
+}
+
+.field {
+    flex: 2;
+    min-width: 140px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #2c3e50;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 28px;
+    border: 1.5px solid #cfdfed;
+    background: white;
+    transition: 0.2s;
+    font-weight: 500;
+    outline: none;
+}
+
+input:focus {
+    border-color: #2c7da0;
+    box-shadow: 0 0 0 3px rgba(44, 125, 160, 0.2);
+}
+
+button {
+    background: #2c7da0;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 26px;
+    border-radius: 40px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    letter-spacing: 0.3px;
+}
+
+button:hover {
+    background: #1f5e7a;
+    transform: scale(0.97);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.result-area {
+    background: #f8fafd;
+    border-radius: 28px;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid #e2edf7;
+    box-shadow: inset 0 1px 3px #0001, 0 2px 4px #fff8;
+}
+
+.result-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1f5068;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.primes-list {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 1rem;
+    line-height: 1.45;
+    background: #ffffffcc;
+    border-radius: 24px;
+    padding: 14px 18px;
+    word-break: break-word;
+    max-height: 280px;
+    overflow-y: auto;
+    color: #0a2f44;
+}
+
+.empty-message {
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 12px 0;
+}
+
+hr {
+    margin: 16px 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #cbdde9, transparent);
+}
+
+.info-note {
+    font-size: 0.75rem;
+    color: #5e7a93;
+    margin-top: 12px;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    body {
+        padding: 16px;
+    }
+    .card {
+        padding: 20px;
+    }
+    h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/* стили для консольного вывода таблицы — дополнительное окошко не нужно, но можно показать последний запрос */
+.console-hint {
+    background: #1e2f3c;
+    color: #b8e2f2;
+    border-radius: 20px;
+    padding: 12px 18px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    margin-top: 20px;
+}
+
+.badge {
+    background: #e9ecef;
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
