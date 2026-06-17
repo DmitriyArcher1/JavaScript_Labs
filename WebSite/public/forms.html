@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивные элементы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 30px 20px;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        
+        .task {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+        
+        .task h2 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        .task h3 {
+            color: #2c3e50;
+            margin: 12px 0 8px 0;
+            font-size: 15px;
+        }
+        
+        .task label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        /* ============ Задание 1: Select ============ */
+        select {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            min-width: 200px;
+            cursor: pointer;
+            background: white;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .info-box {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .btn-green {
+            padding: 8px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .btn-green:hover {
+            background: #219a52;
+        }
+        
+        /* ============ Задание 2: Placeholder ============ */
+        .field-wrapper {
+            position: relative;
+            margin: 15px 0;
+        }
+        
+        .field-wrapper input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+            background: white;
+        }
+        
+        .field-wrapper input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .field-wrapper .ph-label {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #3498db;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: white;
+            padding: 0 5px;
+        }
+        
+        .field-wrapper .ph-label.active {
+            top: -10px;
+            transform: translateY(0);
+            font-size: 12px;
+        }
+        
+        .field-wrapper .ph-label.hidden {
+            display: none;
+        }
+        
+        .hint {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .hint kbd {
+            background: #ecf0f1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: 1px solid #bdc3c7;
+        }
+        
+        /* ============ Задание 3: Редактируемый div ============ */
+        .editable-div {
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            min-height: 80px;
+            background: white;
+            font-size: 16px;
+            line-height: 1.6;
+            transition: border-color 0.3s;
+        }
+        
+        .editable-div textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            border: none;
+            resize: none;
+            background: transparent;
+        }
+        
+        .editable-div textarea:focus {
+            outline: none;
+        }
+        
+        /* ============ Задание 4: Редактируемая таблица ============ */
+        .editable-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .editable-table td {
+            border: 1px solid #bdc3c7;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            min-height: 40px;
+            position: relative;
+        }
+        
+        .editable-table td:hover {
+            background: #f8f9fa;
+        }
+        
+        .editable-table td.editing {
+            padding: 8px;
+            background: #fff;
+        }
+        
+        .editable-table td .edit-controls {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .editable-table td .edit-controls button {
+            padding: 4px 14px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .editable-table td .edit-controls .btn-ok {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .editable-table td .edit-controls .btn-ok:hover {
+            background: #219a52;
+        }
+        
+        .editable-table td .edit-controls .btn-cancel {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .editable-table td .edit-controls .btn-cancel:hover {
+            background: #c0392b;
+        }
+        
+        .editable-table td textarea {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            resize: none;
+            min-height: 50px;
+        }
+        
+        .editable-table td textarea:focus {
+            outline: none;
+        }
+        
+        /* ============ Задание 5: Modal Prompt ============ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-box .msg {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .modal-box input {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+        
+        .modal-box input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .modal-box .btns {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .modal-box .btns button {
+            padding: 8px 25px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .modal-box .btns .btn-ok {
+            background: #3498db;
+            color: white;
+        }
+        
+        .modal-box .btns .btn-ok:hover {
+            background: #2980b9;
+        }
+        
+        .modal-box .btns .btn-cancel {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .modal-box .btns .btn-cancel:hover {
+            background: #c0392b;
+        }
+        
+        .btn-purple {
+            padding: 10px 25px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-purple:hover {
+            background: #8e44ad;
+        }
+        
+        .result-box {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        
+        .demo-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        
+        .demo-row > * {
+            flex: 1;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Интерактивные элементы</h1>
+
+        <div class="task">
+            <h2>1. Работа с Select</h2>
+            
+            <select id="musicSelect">
+                <option value="Rock">Рок</option>
+                <option value="Blues" selected>Блюз</option>
+            </select>
+            
+            <div class="info-box" id="selectInfo">
+                Выбрано: <strong>Блюз</strong> (значение: Blues)
+            </div>
+            
+            <button class="btn-green" onclick="addClassicOption()">➕ Добавить "Классика"</button>
+        </div>
+        <div class="task">
+            <h2>2. Плейсхолдер с подсказкой</h2>
+            
+            <div class="field-wrapper">
+                <input type="text" id="phInput" data-placeholder="Введите ваше имя...">
+                <span class="ph-label" id="phLabel">Введите ваше имя...</span>
+            </div>
+            
+            <div class="hint">
+                <kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> — навигация
+            </div>
+        </div>
+        <div class="task">
+            <h2>3. Редактируемый блок</h2>
+            
+            <div class="editable-div" id="editableDiv">
+                Нажмите <kbd>Ctrl+E</kbd> для редактирования<br>
+                <kbd>Ctrl+S</kbd> — сохранить, <kbd>Esc</kbd> — отменить
+            </div>
+            
+            <div class="hint" style="margin-top:10px;">
+                💡 <kbd>Ctrl+E</kbd> — редактировать &nbsp;|&nbsp; <kbd>Ctrl+S</kbd> — сохранить &nbsp;|&nbsp; <kbd>Esc</kbd> — отменить
+            </div>
+        </div>
+        <div class="task">
+            <h2>4. Редактируемая таблица</h2>
+            
+            <table class="editable-table" id="editableTable">
+                <tbody>
+                    <tr>
+                        <td data-id="r1c1">Ячейка 1.1</td>
+                        <td data-id="r1c2">Ячейка 1.2</td>
+                        <td data-id="r1c3">Ячейка 1.3</td>
+                    </tr>
+                    <tr>
+                        <td data-id="r2c1">Ячейка 2.1</td>
+                        <td data-id="r2c2">Ячейка 2.2</td>
+                        <td data-id="r2c3">Ячейка 2.3</td>
+                    </tr>
+                    <tr>
+                        <td data-id="r3c1">Ячейка 3.1</td>
+                        <td data-id="r3c2">Ячейка 3.2</td>
+                        <td data-id="r3c3">Ячейка 3.3</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="hint" style="margin-top:10px;">
+                💡 Клик по ячейке — редактирование. Только одна ячейка за раз.
+            </div>
+        </div>
+        <div class="task">
+            <h2>5. Модальное окно с формой</h2>
+            
+            <button class="btn-purple" onclick="showPromptDemo()">📝 Показать диалог</button>
+            
+            <div class="result-box" id="promptResult">
+                Результат будет здесь...
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div class="msg" id="modalMsg">Введите что-нибудь...</div>
+            <input type="text" id="modalInput" placeholder="Введите текст...">
+            <div class="btns">
+                <button class="btn-cancel" id="modalCancel">Отмена</button>
+                <button class="btn-ok" id="modalOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const select = document.getElementById('musicSelect');
+        const selectInfo = document.getElementById('selectInfo');
+
+        function updateSelectInfo() {
+            const opt = select.options[select.selectedIndex];
+            selectInfo.innerHTML = `Выбрано: <strong>${opt.text}</strong> (значение: ${opt.value})`;
+        }
+
+        select.addEventListener('change', updateSelectInfo);
+
+        function addClassicOption() {
+            let exists = false;
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === 'Classic') {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = 'Classic';
+                opt.textContent = 'Классика';
+                select.appendChild(opt);
+            }
+            select.value = 'Classic';
+            updateSelectInfo();
+        }
+
+        updateSelectInfo();
+        const phInput = document.getElementById('phInput');
+        const phLabel = document.getElementById('phLabel');
+
+        function updatePlaceholder() {
+            if (phInput.value === '') {
+                phLabel.className = 'ph-label';
+            } else {
+                phLabel.className = 'ph-label hidden';
+            }
+        }
+
+        phInput.addEventListener('focus', function() {
+            phLabel.classList.add('active');
+        });
+
+        phInput.addEventListener('blur', function() {
+            phLabel.classList.remove('active');
+            updatePlaceholder();
+        });
+
+        phInput.addEventListener('input', updatePlaceholder);
+        updatePlaceholder();
+
+        const editableDiv = document.getElementById('editableDiv');
+        let divEditing = false;
+
+        // Загрузка из localStorage
+        const savedDiv = localStorage.getItem('editableContent');
+        if (savedDiv) {
+            editableDiv.innerHTML = savedDiv;
+        }
+
+        function startDivEdit() {
+            if (divEditing) return;
+            divEditing = true;
+            const content = editableDiv.innerHTML;
+            const ta = document.createElement('textarea');
+            ta.value = content;
+            editableDiv.innerHTML = '';
+            editableDiv.appendChild(ta);
+            ta.focus();
+        }
+
+        function saveDivEdit() {
+            const ta = editableDiv.querySelector('textarea');
+            if (ta) {
+                const content = ta.value;
+                editableDiv.innerHTML = content;
+                localStorage.setItem('editableContent', content);
+                divEditing = false;
+            }
+        }
+
+        function cancelDivEdit() {
+            const ta = editableDiv.querySelector('textarea');
+            if (ta) {
+                const content = ta.dataset.orig || editableDiv.innerHTML;
+                editableDiv.innerHTML = content;
+                divEditing = false;
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                if (!divEditing) startDivEdit();
+            }
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                if (divEditing) saveDivEdit();
+            }
+            if (e.key === 'Escape' && divEditing) {
+                cancelDivEdit();
+            }
+        });
+
+        const table = document.getElementById('editableTable');
+        let editingCell = null;
+
+        function loadTableData() {
+            const saved = sessionStorage.getItem('tableData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    const cells = table.querySelectorAll('td');
+                    cells.forEach(td => {
+                        const id = td.dataset.id;
+                        if (data[id] !== undefined) {
+                            td.textContent = data[id];
+                        }
+                    });
+                } catch (e) {}
+            }
+        }
+
+        function saveTableData() {
+            const data = {};
+            const cells = table.querySelectorAll('td');
+            cells.forEach(td => {
+                data[td.dataset.id] = td.textContent;
+            });
+            sessionStorage.setItem('tableData', JSON.stringify(data));
+        }
+
+        function startCellEdit(cell) {
+            if (editingCell) return;
+            if (cell.classList.contains('editing')) return;
+
+            editingCell = cell;
+            const content = cell.textContent;
+
+            cell.classList.add('editing');
+            cell.innerHTML = '';
+
+            const ta = document.createElement('textarea');
+            ta.value = content;
+            cell.appendChild(ta);
+
+            const controls = document.createElement('div');
+            controls.className = 'edit-controls';
+
+            const okBtn = document.createElement('button');
+            okBtn.className = 'btn-ok';
+            okBtn.textContent = 'OK';
+            okBtn.onclick = function(e) {
+                e.stopPropagation();
+                finishCellEdit(cell, true);
+            };
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn-cancel';
+            cancelBtn.textContent = 'Отмена';
+            cancelBtn.onclick = function(e) {
+                e.stopPropagation();
+                finishCellEdit(cell, false);
+            };
+
+            controls.appendChild(okBtn);
+            controls.appendChild(cancelBtn);
+            cell.appendChild(controls);
+
+            ta.focus();
+            ta.select();
+        }
+
+        function finishCellEdit(cell, save) {
+            if (!editingCell || editingCell !== cell) return;
+
+            const ta = cell.querySelector('textarea');
+            if (save && ta) {
+                cell.textContent = ta.value;
+                saveTableData();
+            } else if (!save) {
+                cell.textContent = cell.dataset.orig || ' ';
+            }
+
+            cell.classList.remove('editing');
+            editingCell = null;
+        }
+
+        table.addEventListener('click', function(e) {
+            const cell = e.target.closest('td');
+            if (!cell) return;
+            if (cell.classList.contains('editing')) return;
+            if (editingCell) return;
+
+            cell.dataset.orig = cell.textContent;
+            startCellEdit(cell);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && editingCell) {
+                finishCellEdit(editingCell, false);
+                e.preventDefault();
+            }
+        });
+
+        loadTableData();
+
+        const overlay = document.getElementById('modalOverlay');
+        const modalInput = document.getElementById('modalInput');
+        const modalMsg = document.getElementById('modalMsg');
+        const modalOk = document.getElementById('modalOk');
+        const modalCancel = document.getElementById('modalCancel');
+        let modalCallback = null;
+        let lastFocus = null;
+
+        function showPrompt(html, callback) {
+            modalMsg.innerHTML = html;
+            modalInput.value = '';
+            modalCallback = callback;
+            lastFocus = document.activeElement;
+
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(function() {
+                modalInput.focus();
+                modalInput.select();
+            }, 100);
+        }
+
+        function closeModal(value) {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+
+            if (modalCallback) {
+                modalCallback(value);
+                modalCallback = null;
+            }
+
+            if (lastFocus) {
+                lastFocus.focus();
+            }
+        }
+
+        modalOk.addEventListener('click', function() {
+            closeModal(modalInput.value);
+        });
+
+        modalCancel.addEventListener('click', function() {
+            closeModal(null);
+        });
+
+        modalInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                closeModal(modalInput.value);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeModal(null);
+            }
+        });
+
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                closeModal(null);
+            }
+        });
+
+        overlay.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                const focusable = overlay.querySelectorAll('input, button');
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+
+                if (e.shiftKey) {
+                    if (document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                } else {
+                    if (document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            }
+        });
+
+        function showPromptDemo() {
+            showPrompt(
+                'Введите что-нибудь<br><strong>умное</strong> :)',
+                function(value) {
+                    const result = document.getElementById('promptResult');
+                    if (value !== null) {
+                        result.innerHTML = '✅ Вы ввели: <strong>' + value + '</strong>';
+                    } else {
+                        result.innerHTML = '❌ Ввод отменён';
+                    }
+                }
+            );
+        }
+
+        window.addEventListener('beforeunload', function() {
+            saveTableData();
+        });
+
+        console.log('Все задания загружены!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шахматная доска</title>
+    <link rel="shortcut icon" href="../icons/chess.png" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a2e;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            background: #2d2d44;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        
+        .title {
+            text-align: center;
+            color: #ecf0f1;
+            font-size: 28px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+            background: #8b7355;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        td {
+            width: 65px;
+            height: 65px;
+            text-align: center;
+            font-size: 42px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .light {
+            background-color: #ffce9e;
+        }
+        
+        .dark {
+            background-color: #d18b47;
+        }
+        
+        .label {
+            color: #ecf0f1;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            width: 35px;
+            height: 35px;
+        }
+        
+        .label-top, .label-bottom {
+            height: 35px;
+            font-size: 14px;
+        }
+        
+        .label-left, .label-right {
+            width: 35px;
+            font-size: 14px;
+        }
+        
+        .corner {
+            background: transparent !important;
+            width: 35px;
+            height: 35px;
+        }
+        
+        .piece-white {
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .piece-black {
+            color: #1a1a1a;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+        
+        .selected {
+            box-shadow: inset 0 0 0 4px #ffd700 !important;
+        }
+        
+        .available {
+            position: relative;
+        }
+        
+        .available::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 35px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .info {
+            text-align: center;
+            color: #ecf0f1;
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .turn-indicator {
+            text-align: center;
+            color: #ecf0f1;
+            font-size: 18px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+        }
+        
+        .piece-white-text {
+            color: #fff;
+        }
+        
+        .piece-black-text {
+            color: #111;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">♔ Шахматная доска ♚</div>
+        
+        <div class="turn-indicator" id="turnIndicator">Ход: ♔ Белые</div>
+        
+        <table id="chessboard"></table>
+        
+        <div class="controls">
+            <button onclick="resetBoard()">🔄 Начать заново</button>
+        </div>
+        <div class="info">Кликните по фигуре, затем по клетке для хода</div>
+    </div>
+
+    <script>
+        const PIECES = {
+            'wK': '♔', 'wQ': '♕', 'wR': '♖', 'wB': '♗', 'wN': '♘', 'wP': '♙',
+            'bK': '♚', 'bQ': '♛', 'bR': '♜', 'bB': '♝', 'bN': '♞', 'bP': '♟'
+        };
+        
+        const INITIAL = {
+            'a8': 'bR', 'b8': 'bN', 'c8': 'bB', 'd8': 'bQ', 'e8': 'bK', 'f8': 'bB', 'g8': 'bN', 'h8': 'bR',
+            'a7': 'bP', 'b7': 'bP', 'c7': 'bP', 'd7': 'bP', 'e7': 'bP', 'f7': 'bP', 'g7': 'bP', 'h7': 'bP',
+            'a6': null, 'b6': null, 'c6': null, 'd6': null, 'e6': null, 'f6': null, 'g6': null, 'h6': null,
+            'a5': null, 'b5': null, 'c5': null, 'd5': null, 'e5': null, 'f5': null, 'g5': null, 'h5': null,
+            'a4': null, 'b4': null, 'c4': null, 'd4': null, 'e4': null, 'f4': null, 'g4': null, 'h4': null,
+            'a3': null, 'b3': null, 'c3': null, 'd3': null, 'e3': null, 'f3': null, 'g3': null, 'h3': null,
+            'a2': 'wP', 'b2': 'wP', 'c2': 'wP', 'd2': 'wP', 'e2': 'wP', 'f2': 'wP', 'g2': 'wP', 'h2': 'wP',
+            'a1': 'wR', 'b1': 'wN', 'c1': 'wB', 'd1': 'wQ', 'e1': 'wK', 'f1': 'wB', 'g1': 'wN', 'h1': 'wR'
+        };
+        
+        let board = {};
+        let selected = null;
+        let turn = 'white';
+        const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        
+        function createBoard() {
+            const table = document.getElementById('chessboard');
+            table.innerHTML = '';
+            
+            for (let row = 0; row < 10; row++) {
+                const tr = document.createElement('tr');
+                
+                for (let col = 0; col < 10; col++) {
+                    const td = document.createElement('td');
+                    
+
+                    if ((row === 0 || row === 9) && (col === 0 || col === 9)) {
+                        td.className = 'corner';
+                        tr.appendChild(td);
+                        continue;
+                    }
+                    
+                    if (row === 0 || row === 9) {
+                        td.className = 'label label-top';
+                        td.textContent = letters[col - 1];
+                        tr.appendChild(td);
+                        continue;
+                    }
+                    
+                    if (col === 0 || col === 9) {
+                        td.className = 'label label-left';
+                        td.textContent = 9 - row;
+                        tr.appendChild(td);
+                        continue;
+                    }
+                    
+                    const isLight = (row + col) % 2 === 0;
+                    td.className = isLight ? 'light' : 'dark';
+                    
+                    const file = letters[col - 1];
+                    const rank = 9 - row;
+                    const pos = file + rank;
+                    td.dataset.pos = pos;
+                    
+                    const piece = board[pos];
+                    if (piece) {
+                        const isWhite = piece.startsWith('w');
+                        td.textContent = PIECES[piece] || '';
+                        td.className += isWhite ? ' piece-white' : ' piece-black';
+                    }
+                    
+                    td.onclick = function() {
+                        handleClick(this.dataset.pos);
+                    };
+                    
+                    tr.appendChild(td);
+                }
+                
+                table.appendChild(tr);
+            }
+        }
+        
+        function updateBoard() {
+            const cells = document.querySelectorAll('td[data-pos]');
+            cells.forEach(td => {
+                const pos = td.dataset.pos;
+                const piece = board[pos];
+                td.className = '';
+                td.textContent = '';
+                
+                const fileIndex = letters.indexOf(pos[0]) + 1;
+                const rank = parseInt(pos[1]);
+                const isLight = (fileIndex + rank) % 2 === 0;
+                td.className = isLight ? 'light' : 'dark';
+                
+                if (piece) {
+                    const isWhite = piece.startsWith('w');
+                    td.textContent = PIECES[piece] || '';
+                    td.className += isWhite ? ' piece-white' : ' piece-black';
+                }
+            
+                if (pos === selected) {
+                    td.className += ' selected';
+                }
+            });
+            
+            const indicator = document.getElementById('turnIndicator');
+            if (turn === 'white') {
+                indicator.textContent = 'Ход: ♔ Белые';
+            } else {
+                indicator.textContent = 'Ход: ♚ Чёрные';
+            }
+        }
+        
+        function handleClick(pos) {
+            if (!pos) return;
+            
+            const piece = board[pos];
+            const isWhite = piece && piece.startsWith('w');
+            
+            if (piece && ((turn === 'white' && isWhite) || (turn === 'black' && !isWhite))) {
+                selected = pos;
+                updateBoard();
+                showMoves(pos);
+                return;
+            }
+            
+            if (selected) {
+                const moves = getMoves(selected);
+                if (moves.includes(pos)) {
+                    board[pos] = board[selected];
+                    delete board[selected];
+                    selected = null;
+                    turn = turn === 'white' ? 'black' : 'white';
+                    updateBoard();
+                    return;
+                }
+            }
+            
+            selected = null;
+            updateBoard();
+        }
+        
+        function showMoves(pos) {
+            const moves = getMoves(pos);
+            const cells = document.querySelectorAll('td[data-pos]');
+            cells.forEach(td => {
+                if (moves.includes(td.dataset.pos)) {
+                    td.className += ' available';
+                }
+            });
+        }
+        
+        function getMoves(pos) {
+            const moves = [];
+            const piece = board[pos];
+            if (!piece) return moves;
+            
+            const isWhite = piece.startsWith('w');
+            const type = piece[1];
+            const file = pos[0];
+            const rank = parseInt(pos[1]);
+            const fi = letters.indexOf(file);
+            
+            switch(type) {
+                case 'P':
+                    const dir = isWhite ? 1 : -1;
+                    const nr = rank + dir;
+                    if (nr >= 1 && nr <= 8) {
+                        const np = file + nr;
+                        if (!board[np]) moves.push(np);
+                        if (fi > 0) {
+                            const tp = letters[fi-1] + nr;
+                            if (board[tp] && board[tp].startsWith(isWhite ? 'b' : 'w')) moves.push(tp);
+                        }
+                        if (fi < 7) {
+                            const tp = letters[fi+1] + nr;
+                            if (board[tp] && board[tp].startsWith(isWhite ? 'b' : 'w')) moves.push(tp);
+                        }
+                    }
+                    break;
+                    
+                case 'N':
+                    const knight = [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]];
+                    knight.forEach(([df, dr]) => {
+                        const nfi = fi + df;
+                        const nr = rank + dr;
+                        if (nfi >= 0 && nfi < 8 && nr >= 1 && nr <= 8) {
+                            const np = letters[nfi] + nr;
+                            if (!board[np] || board[np].startsWith(isWhite ? 'b' : 'w')) moves.push(np);
+                        }
+                    });
+                    break;
+                    
+                case 'B':
+                case 'R':
+                case 'Q':
+                case 'K':
+                    const dirs = type === 'B' ? [[1,1],[1,-1],[-1,1],[-1,-1]] :
+                                type === 'R' ? [[1,0],[-1,0],[0,1],[0,-1]] :
+                                type === 'Q' ? [[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]] :
+                                [[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+                    
+                    const maxSteps = type === 'K' ? 1 : 2;
+                    dirs.forEach(([df, dr]) => {
+                        for (let i = 1; i <= maxSteps; i++) {
+                            const nfi = fi + df * i;
+                            const nr = rank + dr * i;
+                            if (nfi >= 0 && nfi < 8 && nr >= 1 && nr <= 8) {
+                                const np = letters[nfi] + nr;
+                                if (!board[np]) {
+                                    moves.push(np);
+                                } else {
+                                    if (board[np].startsWith(isWhite ? 'b' : 'w')) moves.push(np);
+                                    break;
+                                }
+                            } else break;
+                        }
+                    });
+                    break;
+            }
+            
+            return moves;
+        }
+        
+        function resetBoard() {
+            board = {};
+            for (let key in INITIAL) {
+                board[key] = INITIAL[key];
+            }
+            selected = null;
+            turn = 'white';
+            createBoard();
+            updateBoard();
+        }
+        
+        resetBoard();
+    </script>
+</body>
+</html>

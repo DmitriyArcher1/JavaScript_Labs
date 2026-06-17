@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №3 - Тестирование</title>
+
+    <link rel="shortcut icon" href="../icons/exam.png" type="image/x-icon">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mocha@10.2.0/mocha.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+            margin: 0;
+        }
+        
+        #mocha {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            color: #000;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        #mocha h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        
+        #mocha .test {
+            margin-bottom: 12px;
+        }
+        
+        #mocha .test.pass .test-title {
+            color: #27ae60;
+        }
+        
+        #mocha .test.fail .test-title {
+            color: #e74c3c;
+        }
+        
+        .header-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header-info h2 {
+            margin: 0;
+            font-weight: 300;
+        }
+        
+        .header-info .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #ecf0f1;
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header-info">
+        <h2>Лабораторная работа №3 - numbers3</h2>
+        <div>
+            <span class="badge">Всего тестов: <span id="totalTests">0</span></span>
+            <span class="badge" style="margin-left: 10px;">Пройдено: <span id="passedTests">0</span></span>
+        </div>
+    </div>
+
+
+    <div id="mocha"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mocha@10.2.0/mocha.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chai@4.3.7/chai.js"></script>
+    
+    <script src="../../src/scripts/numbers3.js"></script>
+    
+    <script>
+        mocha.setup('bdd');
+        mocha.reporter('html');
+        
+        const { expect, assert, should } = chai;
+        should();
+        
+
+        function updateStats() {
+            const tests = document.querySelectorAll('#mocha .test');
+            const passed = document.querySelectorAll('#mocha .test.pass');
+            const failed = document.querySelectorAll('#mocha .test.fail');
+            
+            document.getElementById('totalTests').textContent = tests.length;
+            document.getElementById('passedTests').textContent = passed.length;
+            
+            const progress = tests.length > 0 ? (passed.length / tests.length) * 100 : 0;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            const fill = document.getElementById('progressFill');
+            if (failed.length > 0) {
+                fill.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+            } else if (tests.length > 0 && passed.length === tests.length) {
+                fill.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
+            }
+        }
+        
+        console.log('✅ Файл numbers3.js загружен!');
+        console.log('Доступные функции:', Object.keys(window).filter(key => 
+            ['getDecimal', 'divmod', 'ucFirst', 'normalizeUrl', 'checkSpam', 'truncate', 'camelize', 'fibs', 'arrReverseSorted', 'unique'].includes(key)
+        ));
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('getDecimal(num) - дробная часть числа', function() {
+            it('должна возвращать дробную часть для положительных чисел', function() {
+                expect(getDecimal(1.23)).to.equal(0.23);
+                expect(getDecimal(3.14159)).to.be.closeTo(0.14159, 0.00001);
+                expect(getDecimal(5.0)).to.equal(0);
+            });
+            
+            it('должна возвращать дробную часть для отрицательных чисел', function() {
+                expect(getDecimal(-1.23)).to.equal(0.77);
+                expect(getDecimal(-3.14)).to.be.closeTo(0.86, 0.00001);
+                expect(getDecimal(-5.0)).to.equal(0);
+            });
+            
+            it('должна возвращать 0 для целых чисел', function() {
+                expect(getDecimal(1)).to.equal(0);
+                expect(getDecimal(-1)).to.equal(0);
+                expect(getDecimal(0)).to.equal(0);
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('divmod(divident, divisor) - деление с остатком', function() {
+            it('должна правильно делить положительные числа', function() {
+                expect(divmod(7, 3)).to.deep.equal([2, 1]);
+                expect(divmod(10, 3)).to.deep.equal([3, 1]);
+                expect(divmod(8, 4)).to.deep.equal([2, 0]);
+            });
+            
+            it('должна правильно делить с отрицательным делимым', function() {
+                expect(divmod(-7, 3)).to.deep.equal([-3, 2]);
+                expect(divmod(-10, 3)).to.deep.equal([-4, 2]);
+                expect(divmod(-8, 4)).to.deep.equal([-2, 0]);
+            });
+            
+            it('должна правильно делить с отрицательным делителем', function() {
+                expect(divmod(7, -3)).to.deep.equal([-3, -2]);
+                expect(divmod(10, -3)).to.deep.equal([-4, -2]);
+                expect(divmod(8, -4)).to.deep.equal([-2, 0]);
+            });
+            
+            it('должна возвращать [NaN, NaN] при делении на ноль', function() {
+                const result = divmod(7, 0);
+                expect(isNaN(result[0])).to.be.true;
+                expect(isNaN(result[1])).to.be.true;
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('ucFirst(str) - заглавный первый символ', function() {
+            it('должна делать заглавной первую букву', function() {
+                expect(ucFirst('hello')).to.equal('Hello');
+                expect(ucFirst('world')).to.equal('World');
+                expect(ucFirst('javascript')).to.equal('Javascript');
+            });
+            
+            it('должна работать с русскими буквами', function() {
+                expect(ucFirst('привет')).to.equal('Привет');
+                expect(ucFirst('мир')).to.equal('Мир');
+            });
+            
+            it('должна возвращать пустую строку для пустой строки', function() {
+                expect(ucFirst('')).to.equal('');
+            });
+            
+            it('должна работать со строками в верхнем регистре', function() {
+                expect(ucFirst('HELLO')).to.equal('HELLO');
+                expect(ucFirst('ПРИВЕТ')).to.equal('ПРИВЕТ');
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('normalizeUrl(url) - нормализация URL', function() {
+            it('должна добавлять https:// если его нет', function() {
+                expect(normalizeUrl('yandex.ru')).to.equal('https://yandex.ru');
+                expect(normalizeUrl('google.com')).to.equal('https://google.com');
+            });
+            
+            it('должна заменять http:// на https://', function() {
+                expect(normalizeUrl('http://yandex.ru')).to.equal('https://yandex.ru');
+                expect(normalizeUrl('http://google.com')).to.equal('https://google.com');
+            });
+            
+            it('должна оставлять https:// без изменений', function() {
+                expect(normalizeUrl('https://yandex.ru')).to.equal('https://yandex.ru');
+                expect(normalizeUrl('https://google.com')).to.equal('https://google.com');
+            });
+            
+            it('должна правильно обрабатывать URL с http в названии', function() {
+                expect(normalizeUrl('https.ru')).to.equal('https://https.ru');
+                expect(normalizeUrl('http.ru')).to.equal('https://http.ru');
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('checkSpam(str) - проверка спама', function() {
+            it('должна возвращать true при наличии viagra (регистронезависимо)', function() {
+                expect(checkSpam('viagra')).to.be.true;
+                expect(checkSpam('VIAGRA')).to.be.true;
+                expect(checkSpam('ViAgRa')).to.be.true;
+                expect(checkSpam('__Viagra__')).to.be.true;
+            });
+            
+            it('должна возвращать true при наличии XXX (регистронезависимо)', function() {
+                expect(checkSpam('xxx')).to.be.true;
+                expect(checkSpam('XXX')).to.be.true;
+                expect(checkSpam('_XxX_')).to.be.true;
+                expect(checkSpam('XxX')).to.be.true;
+            });
+            
+            it('должна возвращать false при отсутствии запрещённых слов', function() {
+                expect(checkSpam('test')).to.be.false;
+                expect(checkSpam('hello world')).to.be.false;
+                expect(checkSpam('')).to.be.false;
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('truncate(str, maxlength) - обрезка строки', function() {
+            it('должна возвращать строку без изменений, если она короче maxlength', function() {
+                expect(truncate('Мама мыла раму.', 100)).to.equal('Мама мыла раму.');
+                expect(truncate('Hello', 10)).to.equal('Hello');
+            });
+            
+            it('должна обрезать строку, если она длиннее maxlength', function() {
+                expect(truncate('Мама мыла раму.', 10)).to.equal('Мама мыла…');
+                expect(truncate('Hello World', 8)).to.equal('Hello W…');
+            });
+            
+            it('должна использовать правильный символ многоточия', function() {
+                const result = truncate('Длинная строка', 5);
+                expect(result).to.have.lengthOf(5);
+                expect(result).to.include('…');
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('camelize(str) - преобразование в camelCase', function() {
+            it('должна преобразовывать kebab-case в camelCase', function() {
+                expect(camelize('var-test-text')).to.equal('varTestText');
+                expect(camelize('hello-world')).to.equal('helloWorld');
+                expect(camelize('my-long-variable-name')).to.equal('myLongVariableName');
+            });
+            
+            it('должна работать со строками без дефисов', function() {
+                expect(camelize('test')).to.equal('test');
+                expect(camelize('hello')).to.equal('hello');
+            });
+            
+            it('должна правильно обрабатывать пустую строку', function() {
+                expect(camelize('')).to.equal('');
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('fibs(n) - массив чисел Фибоначчи', function() {
+            it('должна возвращать массив чисел Фибоначчи', function() {
+                expect(fibs(5)).to.deep.equal([0n, 1n, 1n, 2n, 3n]);
+                expect(fibs(6)).to.deep.equal([0n, 1n, 1n, 2n, 3n, 5n]);
+                expect(fibs(1)).to.deep.equal([0n]);
+            });
+            
+            it('должна возвращать пустой массив для n = 0', function() {
+                expect(fibs(0)).to.deep.equal([]);
+            });
+            
+            it('должна возвращать числа в формате BigInt', function() {
+                const result = fibs(3);
+                expect(result[0]).to.be.a('bigint');
+                expect(result[1]).to.be.a('bigint');
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('arrReverseSorted(arr) - сортировка по убыванию', function() {
+            it('должна сортировать массив по убыванию', function() {
+                expect(arrReverseSorted([1, 3, 22])).to.deep.equal([22, 3, 1]);
+                expect(arrReverseSorted([5, 2, 8, 1, 9])).to.deep.equal([9, 8, 5, 2, 1]);
+            });
+            
+            it('должна работать с отрицательными числами', function() {
+                expect(arrReverseSorted([-1, -3, -2])).to.deep.equal([-1, -2, -3]);
+                expect(arrReverseSorted([5, -1, 3, -10])).to.deep.equal([5, 3, -1, -10]);
+            });
+            
+            it('не должна изменять исходный массив', function() {
+                const original = [1, 3, 22];
+                const sorted = arrReverseSorted(original);
+                expect(original).to.deep.equal([1, 3, 22]);
+                expect(sorted).to.not.equal(original);
+            });
+        });
+        
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('unique(arr) - уникальные значения', function() {
+            it('должна возвращать массив уникальных значений', function() {
+                expect(unique([0, 1, 1, 2])).to.deep.equal([0, 1, 2]);
+                expect(unique(['a', 'b', 'c', 'c'])).to.deep.equal(['a', 'b', 'c']);
+                expect(unique([1, 2, 3, 4, 5])).to.deep.equal([1, 2, 3, 4, 5]);
+            });
+            
+            it('должна работать с разными типами данных', function() {
+                const result = unique([1, '1', 1, '1', 2]);
+                expect(result).to.deep.equal([1, '1', 2]);
+            });
+            
+            it('должна возвращать пустой массив для пустого массива', function() {
+                expect(unique([])).to.deep.equal([]);
+            });
+            
+            it('должна сохранять порядок первого вхождения', function() {
+                expect(unique([3, 1, 2, 3, 1, 2])).to.deep.equal([3, 1, 2]);
+                expect(unique(['a', 'b', 'a', 'c', 'b'])).to.deep.equal(['a', 'b', 'c']);
+            });
+        });
+        
+        // ============================================================
+        // Запуск тестов
+        // ============================================================
+        mocha.run(function(failures) {
+            console.log('✅ Тестирование завершено. Ошибок:', failures);
+            updateStats();
+        });
+        
+        setTimeout(updateStats, 100);
+        setTimeout(updateStats, 500);
+        setTimeout(updateStats, 1000);
+        setTimeout(updateStats, 2000);
+    </script>
+</body>
+</html>

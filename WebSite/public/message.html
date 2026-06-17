@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список сообщений</title>
+    <link rel="shortcut icon" href="../icons/message.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        
+        .messages {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .message {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.hidden {
+            opacity: 0;
+            transform: translateX(100px);
+            max-height: 0;
+            padding: 0 20px;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .message-text {
+            flex: 1;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .message-meta {
+            color: #95a5a6;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin-left: 15px;
+            flex-shrink: 0;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .no-messages {
+            text-align: center;
+            color: #95a5a6;
+            padding: 30px;
+            font-size: 18px;
+        }
+        
+        .message-count {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="messages">
+        <h2>📨 Мои сообщения</h2>
+        <div class="message-count">Всего сообщений: <span id="messageCount">0</span></div>
+        
+        <div id="messageList">
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">🔄 Восстановить все сообщения</button>
+    </div>
+
+    <script>
+        const initialMessages = [
+            { id: 1, text: 'Привет! Как дела?', date: '2024-01-15 14:30' },
+            { id: 2, text: 'Не забывай про встречу завтра в 15:00', date: '2024-01-15 12:20' },
+            { id: 3, text: 'Отличная погода сегодня! 🌞', date: '2024-01-15 10:15' },
+            { id: 4, text: 'Спасибо за помощь!', date: '2024-01-14 18:45' },
+            { id: 5, text: 'Пришли мне документы, пожалуйста', date: '2024-01-14 16:00' }
+        ];
+        
+        let messages = [...initialMessages];
+        let nextId = 6;
+        
+        const messageList = document.getElementById('messageList');
+        const messageCount = document.getElementById('messageCount');
+        const resetBtn = document.getElementById('resetBtn');
+        
+
+        function renderMessages() {
+            messageList.innerHTML = '';
+            
+            if (messages.length === 0) {
+                messageList.innerHTML = '<div class="no-messages">📭 Сообщений нет</div>';
+                messageCount.textContent = '0';
+                return;
+            }
+            
+            messages.forEach((msg, index) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+                messageDiv.dataset.id = msg.id;
+                messageDiv.style.animationDelay = (index * 0.05) + 's';
+                
+                const textDiv = document.createElement('div');
+                textDiv.className = 'message-text';
+                textDiv.innerHTML = `
+                    ${msg.text}
+                    <div class="message-meta">📅 ${msg.date}</div>
+                `;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = '✕ Удалить';
+                deleteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    deleteMessage(msg.id);
+                });
+                
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(deleteBtn);
+                messageList.appendChild(messageDiv);
+            });
+            
+            messageCount.textContent = messages.length;
+        }
+
+        function deleteMessage(id) {
+            const messageElement = messageList.querySelector(`.message[data-id="${id}"]`);
+            
+            if (messageElement) {
+                messageElement.classList.add('hidden');
+                
+                
+                setTimeout(() => {
+                    messages = messages.filter(msg => msg.id !== id);
+                    renderMessages();
+                }, 300);
+            }
+        }
+        
+
+        function resetMessages() {
+            messages = [...initialMessages];
+            renderMessages();
+        }
+        
+        resetBtn.addEventListener('click', resetMessages);
+        
+        renderMessages();
+    </script>
+</body>
+</html>

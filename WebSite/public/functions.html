@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №2 - Тестирование функций</title>
+
+    <link rel="shortcut icon" href="../icons/test-func.png" type="image/x-icon">
+    
+    <!-- Подключаем Mocha CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mocha@10.2.0/mocha.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        
+        #mocha {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        #mocha h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        
+        #mocha .test {
+            margin-bottom: 12px;
+        }
+        
+        #mocha .test.pass .test-title {
+            color: #27ae60;
+        }
+        
+        #mocha .test.fail .test-title {
+            color: #e74c3c;
+        }
+        
+        .header-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header-info h2 {
+            margin: 0;
+            font-weight: 300;
+        }
+        
+        .header-info .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #ecf0f1;
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .debug-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+        
+        .debug-info pre {
+            margin: 5px 0;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        #mocha {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-info">
+        <h2>Лабораторная работа №2 - тесты функций</h2>
+        <div>
+            <span class="badge">Всего тестов: <span id="totalTests">0</span></span>
+            <span class="badge" style="margin-left: 10px;">Пройдено: <span id="passedTests">0</span></span>
+        </div>
+    </div>
+    
+    <div class="progress-bar">
+        <div class="fill" id="progressFill"></div>
+    </div>
+
+    <!-- Отладочная информация -->
+    <div class="debug-info" id="debugInfo">
+        <strong>🔍 Отладка:</strong>
+        <pre id="debugOutput">Проверка загрузки функций...</pre>
+    </div>
+
+    <div id="mocha"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mocha@10.2.0/mocha.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chai@4.3.7/chai.js"></script>
+    
+    <script>
+        mocha.setup('bdd');
+        mocha.reporter('html');
+        
+        function debug(message) {
+            const output = document.getElementById('debugOutput');
+            output.textContent += '\n' + message;
+            console.log(message);
+        }
+        
+        debug('Начало загрузки...');
+    </script>
+
+    <script src="../../src/scripts/functions.js"></script>
+
+    <script>
+        debug('Проверка загруженных функций:');
+        debug('typeof pow: ' + typeof pow);
+        debug('typeof sumTo: ' + typeof sumTo);
+        debug('typeof isLeapYear: ' + typeof isLeapYear);
+        debug('typeof factorial: ' + typeof factorial);
+        debug('typeof fib: ' + typeof fib);
+        debug('typeof compare: ' + typeof compare);
+        debug('typeof sum: ' + typeof sum);
+        debug('typeof addBlackSpot: ' + typeof addBlackSpot);
+        
+        const allFunctionsLoaded = typeof pow !== 'undefined' && 
+                                  typeof sumTo !== 'undefined' && 
+                                  typeof isLeapYear !== 'undefined' && 
+                                  typeof factorial !== 'undefined' && 
+                                  typeof fib !== 'undefined' && 
+                                  typeof compare !== 'undefined' && 
+                                  typeof sum !== 'undefined' && 
+                                  typeof addBlackSpot !== 'undefined';
+        
+        if (allFunctionsLoaded) {
+            debug('✅ Все функции загружены!');
+            document.getElementById('debugInfo').className = 'debug-info success';
+        } else {
+            debug('❌ Некоторые функции не загружены!');
+            document.getElementById('debugInfo').className = 'debug-info error';
+        }
+        
+        debug('\nПроверка работы функций:');
+        try {
+            debug('pow(2, 3) = ' + pow(2, 3));
+        } catch(e) {
+            debug('Ошибка в pow: ' + e.message);
+        }
+        
+        try {
+            debug('sumTo(5) = ' + sumTo(5));
+        } catch(e) {
+            debug('Ошибка в sumTo: ' + e.message);
+        }
+        
+        try {
+            debug('isLeapYear(2024) = ' + isLeapYear(2024));
+        } catch(e) {
+            debug('Ошибка в isLeapYear: ' + e.message);
+        }
+        
+        try {
+            debug('factorial(5) = ' + factorial(5));
+        } catch(e) {
+            debug('Ошибка в factorial: ' + e.message);
+        }
+        
+        try {
+            debug('fib(10) = ' + fib(10));
+        } catch(e) {
+            debug('Ошибка в fib: ' + e.message);
+        }
+        
+        try {
+            debug('compare(5)(6) = ' + compare(5)(6));
+        } catch(e) {
+            debug('Ошибка в compare: ' + e.message);
+        }
+        
+        try {
+            debug('sum(1, 2, 3) = ' + sum(1, 2, 3));
+        } catch(e) {
+            debug('Ошибка в sum: ' + e.message);
+        }
+        
+        try {
+            const obj = addBlackSpot({});
+            debug('addBlackSpot({}) = ' + JSON.stringify(obj));
+        } catch(e) {
+            debug('Ошибка в addBlackSpot: ' + e.message);
+        }
+    </script>
+
+    <script>
+        const { expect, assert, should } = chai;
+        should();
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('pow(x, n) - возведение в степень', function() {
+            it('должна возвращать 1 при n = 0', function() {
+                expect(pow(2, 0)).to.equal(1);
+                expect(pow(5, 0)).to.equal(1);
+                expect(pow(0, 0)).to.equal(1);
+            });
+
+            it('должна правильно возводить в положительную степень', function() {
+                expect(pow(2, 2)).to.equal(4);
+                expect(pow(3, 3)).to.equal(27);
+                expect(pow(10, 4)).to.equal(10000);
+                expect(pow(2, 10)).to.equal(1024);
+            });
+
+            it('должна правильно вычислять отрицательную степень', function() {
+                expect(pow(2, -2)).to.equal(0.25);
+                expect(pow(10, -1)).to.equal(0.1);
+                expect(pow(4, -3)).to.equal(1/64);
+            });
+
+            it('должна обрабатывать отрицательное основание', function() {
+                expect(pow(-2, 2)).to.equal(4);
+                expect(pow(-2, 3)).to.equal(-8);
+                expect(pow(-2, -2)).to.equal(0.25);
+            });
+
+            it('должна выбрасывать ошибку при нецелом показателе', function() {
+                expect(() => pow(2, 2.5)).to.throw('Степень n должна быть целым числом');
+                expect(() => pow(2, 3.14)).to.throw('Степень n должна быть целым числом');
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('sumTo(n) - сумма чисел от 1 до n', function() {
+            it('должна возвращать 0 при n <= 0', function() {
+                expect(sumTo(0)).to.equal(0);
+                expect(sumTo(-5)).to.equal(0);
+            });
+
+            it('должна правильно вычислять сумму для малых чисел', function() {
+                expect(sumTo(1)).to.equal(1);
+                expect(sumTo(2)).to.equal(3);
+                expect(sumTo(5)).to.equal(15);
+                expect(sumTo(10)).to.equal(55);
+            });
+
+            it('должна правильно вычислять сумму для больших чисел', function() {
+                expect(sumTo(100)).to.equal(5050);
+                expect(sumTo(1000)).to.equal(500500);
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('isLeapYear(year) - проверка високосного года', function() {
+            it('должна возвращать true для високосных годов', function() {
+                expect(isLeapYear(2024)).to.be.true;
+                expect(isLeapYear(2000)).to.be.true;
+                expect(isLeapYear(2016)).to.be.true;
+                expect(isLeapYear(2020)).to.be.true;
+                expect(isLeapYear(2400)).to.be.true;
+            });
+
+            it('должна возвращать false для невисокосных годов', function() {
+                expect(isLeapYear(2025)).to.be.false;
+                expect(isLeapYear(1900)).to.be.false;
+                expect(isLeapYear(2023)).to.be.false;
+                expect(isLeapYear(2100)).to.be.false;
+                expect(isLeapYear(2019)).to.be.false;
+            });
+
+            it('должна корректно обрабатывать года кратные 400', function() {
+                expect(isLeapYear(1600)).to.be.true;
+                expect(isLeapYear(2000)).to.be.true;
+                expect(isLeapYear(2400)).to.be.true;
+            });
+
+            it('должна корректно обрабатывать года кратные 100 но не 400', function() {
+                expect(isLeapYear(1700)).to.be.false;
+                expect(isLeapYear(1800)).to.be.false;
+                expect(isLeapYear(1900)).to.be.false;
+                expect(isLeapYear(2100)).to.be.false;
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('factorial(n) - факториал числа', function() {
+            it('должна возвращать 1 для 0 и 1', function() {
+                expect(factorial(0)).to.equal(1n);
+                expect(factorial(1)).to.equal(1n);
+            });
+
+            it('должна правильно вычислять факториал для малых чисел', function() {
+                expect(factorial(2)).to.equal(2n);
+                expect(factorial(3)).to.equal(6n);
+                expect(factorial(4)).to.equal(24n);
+                expect(factorial(5)).to.equal(120n);
+                expect(factorial(6)).to.equal(720n);
+            });
+
+            it('должна возвращать BigInt', function() {
+                expect(factorial(5)).to.be.a('bigint');
+                expect(factorial(10)).to.be.a('bigint');
+            });
+
+            it('должна правильно вычислять факториал для больших чисел', function() {
+                expect(factorial(10)).to.equal(3628800n);
+                expect(factorial(15)).to.equal(1307674368000n);
+            });
+
+            it('должна выбрасывать ошибку для отрицательных чисел', function() {
+                expect(() => factorial(-1)).to.throw('Факториал определён только для неотрицательных чисел');
+                expect(() => factorial(-5)).to.throw('Факториал определён только для неотрицательных чисел');
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('fib(n) - числа Фибоначчи', function() {
+            it('должна возвращать 0 и 1 для первых двух чисел', function() {
+                expect(fib(0)).to.equal(0n);
+                expect(fib(1)).to.equal(1n);
+            });
+
+            it('должна правильно вычислять числа Фибоначчи для малых индексов', function() {
+                expect(fib(2)).to.equal(1n);
+                expect(fib(3)).to.equal(2n);
+                expect(fib(4)).to.equal(3n);
+                expect(fib(5)).to.equal(5n);
+                expect(fib(6)).to.equal(8n);
+                expect(fib(7)).to.equal(13n);
+                expect(fib(8)).to.equal(21n);
+                expect(fib(9)).to.equal(34n);
+                expect(fib(10)).to.equal(55n);
+            });
+
+            it('должна возвращать BigInt', function() {
+                expect(fib(5)).to.be.a('bigint');
+                expect(fib(50)).to.be.a('bigint');
+            });
+
+            it('должна правильно вычислять числа Фибоначчи для больших индексов', function() {
+                expect(fib(20)).to.equal(6765n);
+                expect(fib(30)).to.equal(832040n);
+                expect(fib(50)).to.equal(12586269025n);
+                expect(fib(100)).to.equal(354224848179261915075n);
+            });
+
+            it('должна выбрасывать ошибку для отрицательных индексов', function() {
+                expect(() => fib(-1)).to.throw('Число Фибоначчи определено только для неотрицательных индексов');
+                expect(() => fib(-10)).to.throw('Число Фибоначчи определено только для неотрицательных индексов');
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('compare(x) - функция сравнения', function() {
+            it('должна возвращать функцию', function() {
+                expect(compare(5)).to.be.a('function');
+            });
+
+            it('должна возвращать true когда y > x', function() {
+                const cmp = compare(5);
+                expect(cmp(6)).to.be.true;
+                expect(cmp(10)).to.be.true;
+                expect(cmp(100)).to.be.true;
+            });
+
+            it('должна возвращать false когда y < x', function() {
+                const cmp = compare(5);
+                expect(cmp(4)).to.be.false;
+                expect(cmp(0)).to.be.false;
+                expect(cmp(-10)).to.be.false;
+            });
+
+            it('должна возвращать null когда y === x', function() {
+                const cmp = compare(5);
+                expect(cmp(5)).to.be.null;
+                expect(compare(0)(0)).to.be.null;
+                expect(compare(-10)(-10)).to.be.null;
+            });
+
+            it('должна работать с разными числами', function() {
+                const cmp10 = compare(10);
+                expect(cmp10(5)).to.be.false;
+                expect(cmp10(10)).to.be.null;
+                expect(cmp10(15)).to.be.true;
+
+                const cmpNeg5 = compare(-5);
+                expect(cmpNeg5(-10)).to.be.false;
+                expect(cmpNeg5(-5)).to.be.null;
+                expect(cmpNeg5(0)).to.be.true;
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('sum(...args) - сумма аргументов', function() {
+            it('должна возвращать 0 без аргументов', function() {
+                expect(sum()).to.equal(0);
+            });
+
+            it('должна правильно суммировать один аргумент', function() {
+                expect(sum(1)).to.equal(1);
+                expect(sum(5)).to.equal(5);
+                expect(sum(-10)).to.equal(-10);
+            });
+
+            it('должна правильно суммировать несколько аргументов', function() {
+                expect(sum(1, 2)).to.equal(3);
+                expect(sum(1, 2, 3)).to.equal(6);
+                expect(sum(1, 2, 3, 4, 5)).to.equal(15);
+                expect(sum(10, 20, 30, 40)).to.equal(100);
+            });
+
+            it('должна работать с отрицательными числами', function() {
+                expect(sum(-1, -2, -3)).to.equal(-6);
+                expect(sum(-5, 5, 10)).to.equal(10);
+                expect(sum(-1, -2, 3, 4)).to.equal(4);
+            });
+
+            it('должна работать с десятичными числами', function() {
+                expect(sum(1.5, 2.5, 3)).to.equal(7);
+                expect(sum(0.1, 0.2, 0.3)).to.equal(0.6);
+            });
+        });
+
+        // ============================================================
+        // ТЕСТЫ
+        // ============================================================
+        describe('addBlackSpot(obj) - добавление символьного свойства', function() {
+            it('должна добавлять свойство blackSpot к объекту', function() {
+                const obj = {};
+                const result = addBlackSpot(obj);
+                
+                expect(result).to.equal(obj);
+                expect(result[Symbol.for("blackSpot")]).to.be.true;
+            });
+
+            it('должна использовать глобальный реестр символов', function() {
+                const obj1 = addBlackSpot({});
+                const obj2 = addBlackSpot({});
+                
+                expect(obj1[Symbol.for("blackSpot")]).to.be.true;
+                expect(obj2[Symbol.for("blackSpot")]).to.be.true;
+                expect(Symbol.for("blackSpot")).to.equal(Symbol.for("blackSpot"));
+            });
+
+            it('должна сохранять существующие свойства объекта', function() {
+                const obj = { name: "test", value: 42 };
+                const result = addBlackSpot(obj);
+                
+                expect(result.name).to.equal("test");
+                expect(result.value).to.equal(42);
+                expect(result[Symbol.for("blackSpot")]).to.be.true;
+            });
+
+            it('должна работать с пустым объектом', function() {
+                const obj = {};
+                const result = addBlackSpot(obj);
+                expect(result[Symbol.for("blackSpot")]).to.be.true;
+            });
+
+            it('должна возвращать тот же объект', function() {
+                const obj = {};
+                const result = addBlackSpot(obj);
+                expect(result).to.equal(obj);
+            });
+        });
+
+        // ============================================================
+        // Запуск тестов и обновление статистики
+        // ============================================================
+        function updateStats() {
+            const tests = document.querySelectorAll('#mocha .test');
+            const passed = document.querySelectorAll('#mocha .test.pass');
+            const failed = document.querySelectorAll('#mocha .test.fail');
+            
+            document.getElementById('totalTests').textContent = tests.length;
+            document.getElementById('passedTests').textContent = passed.length;
+            
+            const progress = tests.length > 0 ? (passed.length / tests.length) * 100 : 0;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            const fill = document.getElementById('progressFill');
+            if (failed.length > 0) {
+                fill.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+            } else if (tests.length > 0 && passed.length === tests.length) {
+                fill.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
+            }
+        }
+
+        debug('\n🚀 Запуск тестов...');
+        mocha.run(function(failures) {
+            debug(`✅ Тестирование завершено. Ошибок: ${failures}`);
+            updateStats();
+        });
+
+        setTimeout(updateStats, 100);
+        setTimeout(updateStats, 500);
+        setTimeout(updateStats, 1000);
+        setTimeout(updateStats, 2000);
+        
+        debug('📄 Страница загружена, тесты запущены');
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скрыть/показать текст</title>
+    <link rel="shortcut icon" href="../icons/text.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        #text {
+            font-size: 24px;
+            color: #2c3e50;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        #toggleBtn {
+            padding: 12px 30px;
+            font-size: 18px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #toggleBtn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        #toggleBtn:active {
+            transform: translateY(0);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Управление текстом</h2>
+        <div id="text">Это текст, который можно скрыть или показать</div>
+        <button id="toggleBtn">Скрыть текст</button>
+    </div>
+
+    <script>
+        const textElement = document.getElementById('text');
+        const toggleBtn = document.getElementById('toggleBtn');
+        let isHidden = false;
+        
+        toggleBtn.addEventListener('click', function() {
+            if (isHidden) {
+                textElement.classList.remove('hidden');
+                toggleBtn.textContent = 'Скрыть текст';
+                isHidden = false;
+            } else {
+                textElement.classList.add('hidden');
+                toggleBtn.textContent = 'Показать текст';
+                isHidden = true;
+            }
+        });
+    </script>
+</body>
+</html>

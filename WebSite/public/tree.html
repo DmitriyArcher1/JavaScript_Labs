@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание дерева</title>
+    <link rel="shortcut icon" href="../icons/tree.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        
+        #container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        
+        ul li {
+            padding: 5px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        ul li::before {
+            content: '📁';
+            margin-right: 8px;
+        }
+        
+        ul li ul li::before {
+            content: '📄';
+        }
+        
+        ul li ul li ul li::before {
+            content: '📄';
+        }
+    </style>
+</head>
+<body>
+    <h2>Дерево из объекта</h2>
+    <div id="container"></div>
+
+    <script>
+        /**
+         * Создаёт вложенный список ul/li из объекта
+         * @param {HTMLElement} container - Контейнер для дерева
+         * @param {Object} data - Объект с данными для дерева
+         */
+        function createTree(container, data) {
+            // Создаём корневой список
+            const ul = document.createElement('ul');
+            
+            function buildTree(obj) {
+                const fragment = document.createDocumentFragment();
+                
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const li = document.createElement('li');
+                        li.textContent = key;
+                        
+                        // Если у объекта есть свойства, создаём вложенный список
+                        const children = obj[key];
+                        if (typeof children === 'object' && children !== null && Object.keys(children).length > 0) {
+                            const childUl = document.createElement('ul');
+                            // Рекурсивно заполняем дочерний список
+                            const childFragment = buildTree(children);
+                            childUl.appendChild(childFragment);
+                            li.appendChild(childUl);
+                        }
+                        
+                        fragment.appendChild(li);
+                    }
+                }
+                
+                return fragment;
+            }
+            
+            const treeFragment = buildTree(data);
+            ul.appendChild(treeFragment);
+            container.appendChild(ul);
+        }
+        
+        // Данные для дерева
+        let data = {
+            "Рыбы": {
+                "форель": {},
+                "лосось": {}
+            },
+            "Деревья": {
+                "Огромные": {
+                    "секвойя": {},
+                    "дуб": {}
+                },
+                "Цветковые": {
+                    "яблоня": {},
+                    "магнолия": {}
+                }
+            }
+        };
+        
+        let container = document.getElementById('container');
+        createTree(container, data);
+    </script>
+</body>
+</html>
