@@ -33,6 +33,9 @@
             align-items: center;
             transition: all 0.3s ease;
             animation: slideIn 0.3s ease;
+            overflow: hidden;
+            max-height: 200px;
+            opacity: 1;
         }
         
         @keyframes slideIn {
@@ -46,19 +49,30 @@
             }
         }
         
+        /* Сообщение скрыто, но остаётся в разметке */
         .message.hidden {
-            opacity: 0;
-            transform: translateX(100px);
             max-height: 0;
             padding: 0 20px;
             margin: 0;
+            opacity: 0;
+            transform: translateX(50px);
+            pointer-events: none;
             overflow: hidden;
+            border: none;
+            box-shadow: none;
+        }
+        
+        .message.hidden .message-text,
+        .message.hidden .delete-btn {
+            opacity: 0;
+            transform: scale(0.8);
         }
         
         .message-text {
             flex: 1;
             color: #2c3e50;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
         
         .message-meta {
@@ -87,6 +101,33 @@
         
         .delete-btn:active {
             transform: scale(0.95);
+        }
+        
+        /* Кнопка показать/скрыть */
+        .toggle-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+        
+        .toggle-btn.hidden-btn {
+            background: #27ae60;
+        }
+        
+        .toggle-btn.hidden-btn:hover {
+            background: #219a52;
         }
         
         .no-messages {
@@ -121,48 +162,93 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
         }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+        
+        .status-badge.active {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status-badge.hidden-status {
+            background: #95a5a6;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="messages">
         <h2>📨 Мои сообщения</h2>
-        <div class="message-count">Всего сообщений: <span id="messageCount">0</span></div>
-        
-        <div id="messageList">
+        <div class="message-count">
+            Всего сообщений: <span id="messageCount">0</span>
+            &nbsp;|&nbsp; Скрыто: <span id="hiddenCount">0</span>
         </div>
+        
+        <div id="messageList"></div>
         
         <button class="reset-btn" id="resetBtn">🔄 Восстановить все сообщения</button>
     </div>
 
     <script>
         const initialMessages = [
-            { id: 1, text: 'Привет! Как дела?', date: '2024-01-15 14:30' },
-            { id: 2, text: 'Не забывай про встречу завтра в 15:00', date: '2024-01-15 12:20' },
-            { id: 3, text: 'Отличная погода сегодня! 🌞', date: '2024-01-15 10:15' },
-            { id: 4, text: 'Спасибо за помощь!', date: '2024-01-14 18:45' },
-            { id: 5, text: 'Пришли мне документы, пожалуйста', date: '2024-01-14 16:00' }
+            { id: 1, text: 'Привет! Как дела?', date: '2024-01-15 14:30', hidden: false },
+            { id: 2, text: 'Не забывай про встречу завтра в 15:00', date: '2024-01-15 12:20', hidden: false },
+            { id: 3, text: 'Отличная погода сегодня! 🌞', date: '2024-01-15 10:15', hidden: false },
+            { id: 4, text: 'Спасибо за помощь!', date: '2024-01-14 18:45', hidden: false },
+            { id: 5, text: 'Пришли мне документы, пожалуйста', date: '2024-01-14 16:00', hidden: false }
         ];
         
-        let messages = [...initialMessages];
-        let nextId = 6;
+        let messages = [];
+        
+        // Загрузка из localStorage
+        function loadMessages() {
+            const saved = localStorage.getItem('messages');
+            if (saved) {
+                try {
+                    messages = JSON.parse(saved);
+                    return;
+                } catch (e) {
+                    console.error('Ошибка загрузки:', e);
+                }
+            }
+            messages = JSON.parse(JSON.stringify(initialMessages));
+        }
+        
+        // Сохранение в localStorage
+        function saveMessages() {
+            localStorage.setItem('messages', JSON.stringify(messages));
+        }
         
         const messageList = document.getElementById('messageList');
         const messageCount = document.getElementById('messageCount');
+        const hiddenCount = document.getElementById('hiddenCount');
         const resetBtn = document.getElementById('resetBtn');
         
-
         function renderMessages() {
             messageList.innerHTML = '';
+            
+            const visibleMessages = messages.filter(msg => !msg.hidden);
             
             if (messages.length === 0) {
                 messageList.innerHTML = '<div class="no-messages">📭 Сообщений нет</div>';
                 messageCount.textContent = '0';
+                hiddenCount.textContent = '0';
                 return;
             }
             
             messages.forEach((msg, index) => {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message';
+                
+                if (msg.hidden) {
+                    messageDiv.classList.add('hidden');
+                }
                 messageDiv.dataset.id = msg.id;
                 messageDiv.style.animationDelay = (index * 0.05) + 's';
                 
@@ -170,9 +256,28 @@
                 textDiv.className = 'message-text';
                 textDiv.innerHTML = `
                     ${msg.text}
-                    <div class="message-meta">📅 ${msg.date}</div>
+                    <div class="message-meta">
+                        📅 ${msg.date}
+                        <span class="status-badge ${msg.hidden ? 'hidden-status' : 'active'}">
+                            ${msg.hidden ? '🔇 Скрыто' : '✅ Активно'}
+                        </span>
+                    </div>
                 `;
                 
+                const btnContainer = document.createElement('div');
+                btnContainer.style.display = 'flex';
+                btnContainer.style.alignItems = 'center';
+                
+                // Кнопка скрыть/показать
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = `toggle-btn ${msg.hidden ? 'hidden-btn' : ''}`;
+                toggleBtn.textContent = msg.hidden ? '👁 Показать' : '🙈 Скрыть';
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleMessage(msg.id);
+                });
+                
+                // Кнопка удалить
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.textContent = '✕ Удалить';
@@ -181,20 +286,44 @@
                     deleteMessage(msg.id);
                 });
                 
+                btnContainer.appendChild(toggleBtn);
+                btnContainer.appendChild(deleteBtn);
+                
                 messageDiv.appendChild(textDiv);
-                messageDiv.appendChild(deleteBtn);
+                messageDiv.appendChild(btnContainer);
                 messageList.appendChild(messageDiv);
             });
             
-            messageCount.textContent = messages.length;
+            const visible = messages.filter(msg => !msg.hidden).length;
+            const hidden = messages.filter(msg => msg.hidden).length;
+            messageCount.textContent = visible;
+            hiddenCount.textContent = hidden;
+            
+            saveMessages();
         }
-
+        
+        // Переключение видимости сообщения (скрыть/показать)
+        function toggleMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (msg) {
+                msg.hidden = !msg.hidden;
+                renderMessages();
+            }
+        }
+        
+        // Полное удаление сообщения из разметки
         function deleteMessage(id) {
             const messageElement = messageList.querySelector(`.message[data-id="${id}"]`);
             
             if (messageElement) {
-                messageElement.classList.add('hidden');
-                
+                // Класс для анимации
+                messageElement.style.transition = 'all 0.3s ease';
+                messageElement.style.transform = 'translateX(100px)';
+                messageElement.style.opacity = '0';
+                messageElement.style.maxHeight = '0';
+                messageElement.style.padding = '0 20px';
+                messageElement.style.margin = '0';
+                messageElement.style.overflow = 'hidden';
                 
                 setTimeout(() => {
                     messages = messages.filter(msg => msg.id !== id);
@@ -203,15 +332,17 @@
             }
         }
         
-
+        // Восстановление всех сообщений
         function resetMessages() {
-            messages = [...initialMessages];
+            messages = JSON.parse(JSON.stringify(initialMessages));
             renderMessages();
         }
         
-        resetBtn.addEventListener('click', resetMessages);
-        
+        // Загрузка при инициализации
+        loadMessages();
         renderMessages();
+        
+        resetBtn.addEventListener('click', resetMessages);
     </script>
 </body>
 </html>
